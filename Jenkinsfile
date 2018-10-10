@@ -5,14 +5,14 @@ pipeline {
     dockerImage = ''
   }
   agent any
-  tools {nodejs 'node' }
+  //tools {nodejs 'node' }
   stages {
     stage('Cloning Git') {
       steps {
         git 'https://github.com/andrenarciso4/docker-project.git'
       }
     }
-    stage('Build') {
+    /*stage('Build') {
        steps {
          sh 'npm install'
          sh 'npm run bowerInstall'
@@ -22,7 +22,7 @@ pipeline {
       steps {
         sh 'npm test'
       }
-    }
+    }*/
     stage('Building image') {
       steps{
         script {
