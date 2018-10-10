@@ -5,16 +5,16 @@ pipeline {
   }
   agent any
   stages {
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/andrenarciso4/docker-project.git'
+      }
+    }
     stage('Building image') {
       steps{
         script {
           docker.build registry + ":$BUILD_NUMBER"
         }
-      }
-    }
-    stage('Cloning Git') {
-      steps {
-        git 'https://github.com/andrenarciso4/docker-project.git'
       }
     }
   }
