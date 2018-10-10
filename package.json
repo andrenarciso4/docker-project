@@ -1,21 +1,13 @@
 {
-  "name": "Web application",
+  "name": "docker_web_app",
   "version": "1.0.0",
-  "description": "A Hello World HTTP server",
-  "main": "main.js",
+  "description": "Node.js on Docker",
+  "author": "First Last <first.last@example.com>",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/andrenarciso4/docker-project/"
-  },
-  "keywords": [
-    "node",
-    "docker",
-    "dockerfile"
-  ],
-  "author": "andrenarciso4",
-  "license": ""
+  "dependencies": {
+    "express": "^4.16.1"
+  }
 }
