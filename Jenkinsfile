@@ -1,10 +1,10 @@
-pipeline {
-    //def app
+node {
+    def app
 
     stage('Clone repository') {
-        steps {
-            git 'https://github.com/andrenarciso4/docker-project.git'
-        }
+        /* Let's make sure we have the repository cloned to our workspace */
+
+        checkout scm
     }
 
     stage('Build image') {
@@ -18,9 +18,9 @@ pipeline {
         /* Ideally, we would run a test framework against our image.
          * For this example, we're using a Volkswagen-type approach ;-) */
 
-        //app.inside {
+        app.inside {
             sh 'echo "Tests passed"'
-        //}
+        }
     }
 
     stage('Push image') {
@@ -28,7 +28,7 @@ pipeline {
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
-        docker.withRegistry('', 'dockerhub') {
+        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
         }
