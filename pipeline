@@ -1,0 +1,21 @@
+pipeline {
+  environment {
+    registry = "andrenarciso4/docker-jenkins"
+    registryCredential = 'dockerhub'
+  }
+  agent any
+  stages {
+    stage('Building image') {
+      steps{
+        script {
+          docker.build registry + ":$BUILD_NUMBER"
+        }
+      }
+    }
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/andrenarciso4/docker-project.git'
+      }
+    }
+  }
+}
