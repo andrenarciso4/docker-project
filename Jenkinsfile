@@ -1,36 +1,33 @@
 node {
-    def app
-
-    stage('Clone repository') {
-        /* Let's make sure we have the repository cloned to our workspace */
-
-        checkout scm
-    }
-
-    stage('Build image') {
-        /* This builds the actual image; synonymous to
-         * docker build on the command line */
-
-        app = docker.build("andrenarciso4/docker-jenkins")
-    }
-
-    stage('Test image') {
-        /* Ideally, we would run a test framework against our image.
-         * For this example, we're using a Volkswagen-type approach ;-) */
-
-        app.inside {
-            sh 'echo "Tests passed"'
+    withCredentials([
+      [$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS'],
+    ]) {
+        stage('Login') {
+           
+            sh """
+                docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+            """
         }
-    }
-
-    stage('Push image') {
-        /* Finally, we'll push the image with two tags:
-         * First, the incremental build number from Jenkins
-         * Second, the 'latest' tag.
-         * Pushing multiple tags is cheap, as all the layers are reused. */
-        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
+        stage('Preparation') {
+          git 'https://github.com/idanshahar/K8SCodeComponentsMeetup.git'
+          
+        }
+        stage('Build') {
+            
+            app = docker.build("idanshahar/node-example","-f ./node/Dockerfile ./node")
+        
+        }
+        stage('Push') {
+            withDockerRegistry([credentialsId: 'docker-hub-credentials']) {
+                app.push("${BUILD_NUMBER}")
+                app.push("latest")
+            }
+        }
+        stage('Deploy') {
+            sh """
+                helm upgrade --install node-example -f node/charts/javascript/values.yaml ./node/charts/javascript \
+				--set image.repository=idanshahar/node-example,image.tag=${BUILD_NUMBER},service.type=LoadBalancer
+            """
         }
     }
 }
