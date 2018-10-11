@@ -9,12 +9,12 @@ node {
             """
         }
         stage('Preparation') {
-          git 'https://github.com/idanshahar/K8SCodeComponentsMeetup.git'
+          git 'https://github.com/andrenarciso4/docker-project.git'
           
         }
         stage('Build') {
             
-            app = docker.build("idanshahar/node-example","-f ./node/Dockerfile ./node")
+            app = docker.build("andrenarciso4/docker-jenkins","-f ./node/Dockerfile ./node")
         
         }
         stage('Push') {
@@ -25,8 +25,8 @@ node {
         }
         stage('Deploy') {
             sh """
-                helm upgrade --install node-example -f node/charts/javascript/values.yaml ./node/charts/javascript \
-				--set image.repository=idanshahar/node-example,image.tag=${BUILD_NUMBER},service.type=LoadBalancer
+                helm upgrade --install docker-jenkins -f node/charts/javascript/values.yaml ./node/charts/javascript \
+				--set image.repository=andrenarciso4/docker-jenkins,image.tag=${BUILD_NUMBER},service.type=LoadBalancer
             """
         }
     }
