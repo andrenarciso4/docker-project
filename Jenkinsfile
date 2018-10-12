@@ -1,6 +1,6 @@
 node {
     withCredentials([
-      [$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS'],
+      [$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS'],
     ]) {
         stage('Login') {
            
@@ -18,7 +18,7 @@ node {
         
         }
         stage('Push') {
-            withDockerRegistry([credentialsId: 'docker-hub-credentials']) {
+            withDockerRegistry([credentialsId: 'docker-hub']) {
                 app.push("${BUILD_NUMBER}")
                 app.push("latest")
             }
